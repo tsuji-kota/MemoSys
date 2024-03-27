@@ -20,13 +20,13 @@ services:
     tty: true
   database:
     image: mysql:8.0
-    container_name: memosys-db
+    container_name: ${MYSQL_DATABASE}
     environment:
-        MYSQL_ROOT_PASSWORD: "light"
-        MYSQL_DATABASE: "memosys-db"
-        MYSQL_USER: "admin"
-        MYSQL_PASSWORD: "project443"
-        TZ: "Asia/Tokyo"
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_DATABASE}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        TZ: ${TZ}
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     tty: true
     stdin_open: true
