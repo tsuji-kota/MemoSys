@@ -1,10 +1,14 @@
-FROM ruby:3.1
+FROM golang:1.20.2-alpine3.17
 
-WORKDIR /app1
+RUN mkdir /go/src/backend
+RUN apk update && apk add git
 
-COPY Gemfile /app1/Gemfile
-COPY Gemfile.lock /app1/Gemfile.lock
+WORKDIR /go/src/backend
 
-RUN bundle install
+ADD . /go/src/backend
 
-CMD ["rails", "server", "-b", "0.0.0.0"]
+RUN go mod download
+
+RUN go install github.com/cosmtrek/air@latest
+
+CMD ["air", "-c", ".air.toml"]
