@@ -32,6 +32,8 @@ services:
     stdin_open: true
     volumes:
         - ./database/data:/var/lib/mysql
+        - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
+        - ./database/sqls:/docker-entrypoint-initdb.d
     ports:
         - 3306:3306
 
