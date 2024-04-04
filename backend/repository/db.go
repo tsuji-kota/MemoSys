@@ -2,9 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 )
+
+var db *sql.DB
 
 func init() {
 	log.Println("connect to database")
@@ -12,14 +14,15 @@ func init() {
 }
 
 func openDB() {
-	db, err := sql.Open("mysql", "root:root@tcp(memmosys-db:3306)/memosys-db?")
+	db_name, err := sql.Open("mysql", "root:root@tcp(memosys-db:3306)/memosys-db?")
 	if err != nil {
 		log.Fatalf("main sql.Open error err:%v", err)
 	}
+	db = db_name
 
 }
 
-func CloseDB() {
+func closeDB() {
 	log.Println("disconnect from database")
 	db.Close()
 }

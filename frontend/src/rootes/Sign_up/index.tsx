@@ -1,13 +1,32 @@
 import "./Sign_up.css"
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { Box, Center, Text, Input, Stack, Button, Grid,GridItem} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 
-function Header() {
-    const navigate = useNavigate();
+
+function Sign_up() {
+    const [input_user_id, setUserId]  = useState<string>("");
+    const [input_password, setPassword] = useState<string>("");
     const clickedSignup =()=>{
         //ここにSign upをする処理を記載する
-        navigate('/home')
+        if(input_user_id === "" || input_password === ""){
+            alert("User IDとPasswordを入力してください")
+          }else{
+            axios({
+              method: "post",
+              url: "http://localhost:3000/signup",
+              data: {"user_id" : input_user_id, "password" : input_password}
+             })
+             .then((res)=>{
+              console.log("ステータスコード:", res.status)
+              console.log(res.data)
+              alert("アカウントが作成されました")
+             })
+              .catch((error)=>{
+                alert("アカウントの作成に失敗しました")
+              })
+          }
     }
 
     return (
@@ -31,11 +50,11 @@ function Header() {
                         <Text fontSize='15px' textAlign="left"  marginTop='30px'>
                             USER ID（e-mail）
                         </Text> 
-                        <Input placeholder='User ID' size='md' bg=' white'/>
+                        <Input placeholder='User ID' size='md' bg=' white'value={input_user_id} onChange={(event) => setUserId(event.target.value)}/>
                         <Text fontSize='15px' textAlign="left"  marginTop='20px'>
                             Password
                         </Text> 
-                        <Input placeholder='Password' size='md' bg=' white'/>
+                        <Input placeholder='Password' size='md' bg=' white' value={input_password} onChange={(event) => setPassword(event.target.value)}/>
                         <Button  borderRadius="full" bg='gray'color='white' _hover={{ bg:'gray' ,color:'black'}}  w='140px' mt={20}  ml="auto" mr="auto" onClick={clickedSignup}>Sign up</Button>
                     </Stack>
                 </Box>
@@ -46,4 +65,4 @@ function Header() {
     )
 }
 
-export default Header
+export default Sign_up

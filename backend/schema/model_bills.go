@@ -1,6 +1,6 @@
-packege schema
+package schema
 
-type bills struct {
+type Bills struct {
 	ID      	string `json:"id"`
 	UserId		string `json:"user_id"`
 	ImageName	string `json:"image_name"`

@@ -10,6 +10,7 @@ CREATE TABLE bills (
     image_name VARCHAR(255),
     issued_month INT,
     issue_at_time DATETIME,
+    progress INT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

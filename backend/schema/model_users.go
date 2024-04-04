@@ -1,7 +1,7 @@
 package schema
 
-type users struct {
-	ID      	string `json:"id"`
+type Users struct {
+	ID      	int `json:"id"`
 	UserId		string `json:"user_id"`
 	Password	string `json:"password"`
 }

@@ -1,16 +1,47 @@
 import "./Login.css"
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Box, Center, Text, Input, Stack, Button, Grid,GridItem} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 
-function Header() {
+type LoginProps = {
+  setState: () => void; 
+};
+
+function Login({setState}:LoginProps) {
+  const [input_user_id, setUserId] = useState("");
+  const [input_password, setPassword] = useState("");
   const navigate = useNavigate();
+
+
   const clickedLogin =()=>{
       //ここにloginをチェックする処理を記載する
-      navigate('/home')
+      //入力値がからの場合はエラーを表示する
+      if(input_user_id === "" || input_password === ""){
+        alert("User IDとPasswordを入力してください")
+        return
+      }else{
+        axios({
+          method: "post",
+          url: "http://localhost:3000/login",
+          data: {"user_id" : input_user_id, "password" : input_password}
+         })
+         .then((res)=>{
+          console.log("ステータスコード:", res.status)
+          console.log(res.data)
+          navigate('/home')
+          setState()
+         })
+          .catch((error)=>{
+            console.log("ステータスコード:", error.response.status)
+            console.log(error.response.data)
+            alert("ログインに失敗しました")
+          })
+      }
+      
   }
     return (
-        <div className='home_box'>
+        <div className='login_box'>
           <Center  h='500px' color='white'>
             <div className="title">
               <Stack spacing={20}>
@@ -33,8 +64,8 @@ function Header() {
           </Center>
           <Center  h='150px'>
           <Stack spacing={4}>
-            <Input placeholder='User ID' size='md' bg=' white'/>
-            <Input placeholder='Password' size='md' bg=' white'/>
+            <Input placeholder='User ID' size='md' bg=' white' value={input_user_id} onChange={(event) => setUserId(event.target.value)}/>
+            <Input placeholder='Password' size='md' bg=' white' value={input_password} onChange={(event) => setPassword(event.target.value)}/>
             <Button  borderRadius="full" bg='gray'color='white' _hover={{ bg:'gray' ,color:'black'}}w='140px'  ml="auto" mr="auto" onClick={clickedLogin}>Login</Button>
           </Stack>
 
@@ -46,4 +77,4 @@ function Header() {
     )
 }
 
-export default Header
+export default Login
