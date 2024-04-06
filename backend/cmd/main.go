@@ -161,6 +161,7 @@ func getData(cxt *gin.Context){
 		//200
 		cxt.JSON(http.StatusOK, bills)
 		log.Printf("データを取得して送信した")
+		
 	} else {
 		cxt.JSON(http.StatusBadRequest, gin.H{
 			//400

@@ -150,24 +150,37 @@ interface IdProps {
               ref={provided.innerRef}
             >
               {testList2.map(({ id, name }, index) => {
-                return (
-                  <Draggable key={id} draggableId={id} index={index}>
-                    {(provided) => (
-                      <div
-                        className="testItem"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div>
-                          {id}:{name}
-                          
+                    return (
+                    <Draggable key={id} draggableId={id} index={index}>
+                        {(provided) => (
+                        <div
+                            className="testItem"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                        >
+                            <div>
+                            <Stack>
+                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{name}円</a></Text>
+                                <HStack spacing='4px'>
+                                    <Tag size='sm' borderRadius='full' color='gray'>
+                                        5月
+                                    </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='gray'>
+                                        Pro+
+                                    </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='gray'>
+                                        2024年
+                                    </Tag>
+                                </HStack>
+                            </Stack>
+                    
+                            </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                );
-              })}
+                        )}
+                    </Draggable>
+                    );
+                })}
               {provided.placeholder}
             </div>
           )}
@@ -183,24 +196,37 @@ interface IdProps {
               ref={provided.innerRef}
             >
               {testList3.map(({ id, name }, index) => {
-                return (
-                  <Draggable key={id} draggableId={id} index={index}>
-                    {(provided) => (
-                      <div
-                        className="testItem"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div>
-                          {id}:{name}
-                          
+                    return (
+                    <Draggable key={id} draggableId={id} index={index}>
+                        {(provided) => (
+                        <div
+                            className="testItem"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                        >
+                            <div>
+                            <Stack>
+                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{name}円</a></Text>
+                                <HStack spacing='4px'>
+                                    <Tag size='sm' borderRadius='full' color='gray'>
+                                        5月
+                                    </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='gray'>
+                                        Pro+
+                                    </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='gray'>
+                                        2024年
+                                    </Tag>
+                                </HStack>
+                            </Stack>
+                    
+                            </div>
                         </div>
-                      </div>
-                    )}
-                  </Draggable>
-                );
-              })}
+                        )}
+                    </Draggable>
+                    );
+                })}
               {provided.placeholder}
             </div>
           )}
