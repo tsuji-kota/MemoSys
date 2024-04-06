@@ -8,6 +8,7 @@ import (
 	"net/http"
     "log"
 	_ "strconv"
+	"fmt"
 )
 
 func main() {
@@ -21,6 +22,9 @@ func main() {
 	router.POST("/signup", postSignup)
 	router.POST("/issue", postIssue)
 	router.POST("/getdata", getData)
+	router.POST("/update", upDate)
+	router.POST("/getusers", getUsers)
+	router.POST("/admin", getAdminData)
     
     srv := http.Server{
         Addr:    ":3000",
@@ -42,6 +46,55 @@ func setCors(router *gin.Engine) {
 	}))
 }
 
+func getAdminData(cxt *gin.Context){
+	log.Printf("getAdminDataのエンドポイントに来てる")
+
+	plan := cxt.PostForm("plan")
+	month := cxt.PostForm("month")
+	id := cxt.PostForm("user_id")
+	log.Printf("issues data: %v %v %v", id,plan,month)
+
+	
+	issues, err :=repository.GetAdminData(id,plan,month)
+
+	log.Printf("issues data: %s", fmt.Sprintf("%v", issues))
+	
+	if err != nil {
+				
+		log.Printf("err : %v", err)
+		cxt.JSON(http.StatusBadRequest, gin.H{
+			//400
+			"message": "getdata faild",
+		})
+
+	} else {
+				//200
+				cxt.JSON(http.StatusOK, issues)
+				log.Printf("get data success!^^")
+		
+	}
+}
+func getUsers(cxt *gin.Context){
+	log.Printf("getusersのエンドポイントに来てる")
+
+	userlist,err :=repository.GetUserslist()
+	
+	if err != nil {
+				
+		log.Printf("err : %v", err)
+		cxt.JSON(http.StatusBadRequest, gin.H{
+			//400
+			"message": "update faild",
+		})
+
+	} else {
+				//200
+				cxt.JSON(http.StatusOK, userlist)
+				log.Printf("update success!^^")
+		
+	}
+
+}
 // postAlbumsはリクエストボディのJSONからアルバムを追加します
 func postSignup(cxt *gin.Context) {
 	var user schema.Users
@@ -156,17 +209,51 @@ func getData(cxt *gin.Context){
 	log.Printf("getDataのエンドポイントに来てる")
 	id := cxt.PostForm("id")
 
-	bills, err :=repository.GetData(id)
+	issues, err :=repository.GetData(id)
+
+	log.Printf("issues data: %s", fmt.Sprintf("%v", issues))
+	
 	if err != nil {
-		//200
-		cxt.JSON(http.StatusOK, bills)
-		log.Printf("データを取得して送信した")
-		
-	} else {
+				
+		log.Printf("err : %v", err)
 		cxt.JSON(http.StatusBadRequest, gin.H{
 			//400
 			"message": "getdata faild",
 		})
+
+	} else {
+				//200
+				cxt.JSON(http.StatusOK, issues)
+				log.Printf("get data success!^^")
+		
+	}
+
+}
+
+func upDate(cxt *gin.Context){
+	log.Printf("updateのエンドポイントに来てる")
+	progress := cxt.PostForm("up_progress")	
+	id := cxt.PostForm("up_id")
+	user_id := cxt.PostForm("user_id")
+
+	err :=repository.UpDate(user_id, id, progress)
+	
+	if err != nil {
+				
+		log.Printf("err : %v", err)
+		cxt.JSON(http.StatusBadRequest, gin.H{
+			//400
+			"message": "update faild",
+		})
+
+	} else {
+				//200
+				cxt.JSON(http.StatusOK, gin.H{
+					//400
+					"message": "update success!^^",
+				})
+				log.Printf("update success!^^")
+		
 	}
 
 }

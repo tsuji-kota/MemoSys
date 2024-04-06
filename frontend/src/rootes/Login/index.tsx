@@ -35,8 +35,14 @@ function Login({setState}:LoginProps) {
 
           setState(res.data.id,res.data.name)
           alert(res.data.name)
+          if(res.data.name==="admin" && res.data.id===1){
+            navigate('/admin')
+            
+          }else{
+            navigate('/home',{state: {id: res.data.id, name: res.data.name}})
+          }
 
-          navigate('/home')
+          
          })
           .catch((error)=>{
             console.log("ステータスコード:", error.response.status)

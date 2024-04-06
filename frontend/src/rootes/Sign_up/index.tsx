@@ -30,7 +30,7 @@ function Sign_up() {
     }
 
     return (
-        <div className='home_box'>
+        <div className='signup_home_box'>
             <Box h='200px' >
             <Grid templateColumns='repeat(5, 1fr)' templateRows='repeat(10, 1fr)' gap={4} h='160px'>
                 <GridItem colStart={2} rowStart={10} colSpan={3} h='10'  > 

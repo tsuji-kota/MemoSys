@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Box, Center, Text, Select, Stack, Button, Grid,GridItem} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'
 interface IdProps {
     loginUserId: string;
   }
@@ -10,10 +11,13 @@ interface IdProps {
 
 function Issue(IdProps : IdProps) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const id = location.state.id;
+    const name = location.state.name;
     const [plan, setPlan] = useState<string>("");
     const [charge, setCharge] = useState<string>("");
     const [month, setMonth] = useState<string>("");
-    const [progress, setProgress] = useState<string>("");
+    const [progress, setProgress] = useState<string>("unSubmit");
     const [file, setFile] = useState<File | null>(null);
 
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,21 +42,21 @@ function Issue(IdProps : IdProps) {
             return;
         }
         //Progressで進捗状況を管理
-        setProgress("unSubmit");
         const formData = new FormData()
         formData.append("file", file)
         formData.append("plan", plan)
         formData.append("charge", charge)
         formData.append("month", month)
         formData.append("progress", progress)
-        formData.append("id", IdProps.loginUserId)
+        // formData.append("id", IdProps.loginUserId)
+        formData.append("id", id)
 
         await axios.post('http://localhost:3000/issue', formData)
         .then((res) => {
         console.log(res.data)
         console.log("ステータスコード:", res.status)
         alert("Issueに成功しました")
-        navigate('/home')
+        // navigate('/home')
         })
         .catch((error)=>{
             console.log("ステータスコード:", error.response.status)

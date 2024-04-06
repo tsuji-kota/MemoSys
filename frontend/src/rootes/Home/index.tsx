@@ -1,33 +1,81 @@
 import "./Home.css"
 import React, { useEffect, useState} from 'react';
+import { useLocation } from 'react-router-dom'
 import axios from 'axios';
 import { Tag , HStack, Stack, Text, Button} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable ,DropResult} from "react-beautiful-dnd";
-import { TestList } from "./test";
-import { TestList2 } from "./test2";
-import { TestList3 } from "./test3";
 interface IdProps {
     loginUserId: string;
   }
-
-
+interface Item {
+    id: string;
+    charge: string;
+    issued_month: string;
+    plan: string;
+    progress: string;
+}
 
 
 
     function Home(IdProps :IdProps) {
+        const location = useLocation();
         const navigate = useNavigate();
-        const [plan, setPlan] = useState<string>("");
-        const [charge, setCharge] = useState<string>("");
-        const [month, setMonth] = useState<string>("");
-        const [progress, setProgress] = useState<string>("");
-        const [file, setFile] = useState<File | null>(null);
-        const [testList, setTestList] = useState(TestList);
-        const [testList2, setTestList2] = useState(TestList2);
-        const [testList3, setTestList3] = useState(TestList3);
+        const id = sessionStorage.getItem('isLogin_id');
+        const name = sessionStorage.getItem('isLogin_name');
+        
+        const [testList, setTestList] = useState<Item[]>([]);
+        const [testList2, setTestList2] = useState<Item[]>([]);
+        const [testList3, setTestList3] = useState<Item[]>([]);
+
+        useEffect(() => {
+            const data = async() => {
+                const formData = new FormData()
+                // formData.append("id", IdProps.loginUserId)
+                 const user_id = sessionStorage.getItem('isLogin_id');
+                 const user_name = sessionStorage.getItem('isLogin_name');
+                 const isLogin = sessionStorage.getItem('isLogin');
+                 console.log("セッション",user_id)
+                 console.log("セッション",user_name)
+                 console.log("セッション",isLogin)
+                 if (user_id == null) {
+                  navigate('/')
+                  alert("ログインしてください")
+                }else{
+                  formData.append("id", user_id)
+                }
+                
+        
+                await axios.post('http://localhost:3000/getdata', formData)
+                .then((res) =>{
+                 if (!res.data || res.data.length === 0) {
+                  console.log('データが存在しません');
+                  // ユーザーにメッセージを表示する処理
+                } else {
+                console.log(res.data)
+                console.log("ステータスコード:", res.status)
+                const test1 = res.data.filter((item: { progress: string; }) => item.progress === "unSubmit")
+                const test2 = res.data.filter((item: { progress: string; }) => item.progress === "Submited")
+                const test3 = res.data.filter((item: { progress: string; }) => item.progress === "Confirmed")
+                setTestList(test1)
+                setTestList2(test2)
+                setTestList3(test3)
+                console.log(test1)
+                console.log(test2)
+                console.log(test3)
+                }})
+                  
+                .catch((error)=>{
+                    console.log("ステータスコード:", error.response.status)
+                    console.log(error.response.data)
+                    alert("getdataに失敗しました")
+                  })
+            }
+            data();
+          }, []);
 
         const onDragEndTest = (result : DropResult) => {
-            console.log(result);
+            // console.log(result);
             const { source, destination } = result;
           
             // ドロップ先がない場合は処理を終了
@@ -44,20 +92,26 @@ interface IdProps {
             }
           
             // ドラッグされたアイテムを特定
-            let draggedItem;
+            let draggedItem: Item;
+
             if (source.droppableId === "unsubmit") {
               draggedItem = testList[source.index];
+              draggedItem.progress = "Submited"
+
             } else if (source.droppableId === "submit") {
-              draggedItem = testList2[source.index];
+              draggedItem = testList2[source.index]; 
+              draggedItem.progress = "Confirmed"
             } else {
               draggedItem = testList3[source.index];
+              draggedItem.progress = "unSubmit"
             }
+            console.log(draggedItem) 
           
             // ステートを更新するための一時リストを作成
-            let newTestList = Array.from(testList);
-            let newTestList2 = Array.from(testList2);
-            let newTestList3 = Array.from(testList3);
-          
+            let newTestList: Item[] = Array.from(testList);
+            let newTestList2: Item[] = Array.from(testList2);
+            let newTestList3: Item[] = Array.from(testList3);
+                      
             // ソースリストからアイテムを削除
             if (source.droppableId === "unsubmit") {
               newTestList.splice(source.index, 1);
@@ -80,11 +134,39 @@ interface IdProps {
             setTestList(newTestList);
             setTestList2(newTestList2);
             setTestList3(newTestList3);
+            //変更したbillのidとprogressを送信
+            
+            update_data(draggedItem.progress ,draggedItem.id );
           };
           
-            const ClilkedIssue =()=>{
-                navigate('/issue')
+          const update_data = async(up_progress :string ,up_id :string) => {
+            const formData = new FormData()
+            // formData.append("id", IdProps.loginUserId)
+            formData.append("up_progress",up_progress)
+            formData.append("up_id",up_id)
+            if (id == null) {
+              navigate('/')
+              alert("ログインしてください")
+            }else{
+              formData.append("user_id", id)
             }
+            
+    
+            await axios.post('http://localhost:3000/update', formData)
+            .then((res) => {
+            console.log(res.data)
+            console.log("update時のステータスコード:", res.status)
+            
+            })
+            .catch((error)=>{
+                console.log("ステータスコード:", error.response.status)
+                console.log(error.response.data)
+                alert("updateに失敗しました")
+              })
+        }
+        const ClilkedIssue =()=>{
+            navigate('/issue',{state: {id: id, name: name}})
+        }
 
   return (
     <div className="home">
@@ -102,7 +184,7 @@ interface IdProps {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >
-                {testList.map(({ id, name }, index) => {
+                {testList.map(({ id, charge, issued_month, plan,progress}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -114,14 +196,15 @@ interface IdProps {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{name}円</a></Text>
+                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
-                                        5月
+                                        {issued_month}月
                                     </Tag>
                                     <Tag size='sm'borderRadius='full'  color='gray'>
-                                        Pro+
+                                        {plan}
                                     </Tag>
+                                    
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>
@@ -149,7 +232,7 @@ interface IdProps {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList2.map(({ id, name }, index) => {
+              {testList2.map(({ id, charge, issued_month, plan,progress}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -161,14 +244,15 @@ interface IdProps {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{name}円</a></Text>
+                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
-                                        5月
+                                        {issued_month}月
                                     </Tag>
                                     <Tag size='sm'borderRadius='full'  color='gray'>
-                                        Pro+
+                                        {plan}
                                     </Tag>
+                                    
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>
@@ -195,7 +279,7 @@ interface IdProps {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList3.map(({ id, name }, index) => {
+              {testList3.map(({ id, charge, issued_month, plan,progress}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -207,14 +291,15 @@ interface IdProps {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{name}円</a></Text>
+                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
-                                        5月
+                                        {issued_month}月
                                     </Tag>
                                     <Tag size='sm'borderRadius='full'  color='gray'>
-                                        Pro+
+                                        {plan}
                                     </Tag>
+                                    
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>

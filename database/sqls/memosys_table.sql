@@ -10,20 +10,20 @@ CREATE TABLE bills (
     image_name VARCHAR(255),
     issued_month INT,
     issue_at_time DATETIME,
-    progress INT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    progress VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE plans (
     id INT AUTO_INCREMENT PRIMARY KEY,
     bill_id INT NOT NULL,
     plan VARCHAR(255) NOT NULL,
-    FOREIGN KEY (bill_id) REFERENCES bills(id)
+    FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE
 );
 
 CREATE TABLE charges (
     id INT AUTO_INCREMENT PRIMARY KEY,
     bill_id INT NOT NULL,
     charge VARCHAR(255) NOT NULL,
-    FOREIGN KEY (bill_id) REFERENCES bills(id)
+    FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE
 );
