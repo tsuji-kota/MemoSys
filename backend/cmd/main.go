@@ -25,6 +25,7 @@ func main() {
 	router.POST("/update", upDate)
 	router.POST("/getusers", getUsers)
 	router.POST("/admin", getAdminData)
+	router.POST("/delete", DeleteIssue)
     
     srv := http.Server{
         Addr:    ":3000",
@@ -44,6 +45,32 @@ func setCors(router *gin.Engine) {
 		AllowCredentials: true,
 
 	}))
+}
+func DeleteIssue(cxt *gin.Context){
+	log.Printf("deleteのエンドポイントに来てる")
+	id := cxt.PostForm("delete_id")
+
+	err :=repository.DeleteIssue(id)
+	
+	if err != nil {
+				
+		log.Printf("err : %v", err)
+		cxt.JSON(http.StatusBadRequest, gin.H{
+			//400
+			"message": "delete faild",
+		})
+
+	} else {
+				//200
+				cxt.JSON(http.StatusOK, gin.H{
+					//400
+					"message": "delete success!^^",
+				})
+				log.Printf("delete success!^^")
+		
+	}
+
+
 }
 
 func getAdminData(cxt *gin.Context){

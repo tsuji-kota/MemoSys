@@ -2,7 +2,7 @@ import "./Home.css"
 import React, { useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom'
 import axios from 'axios';
-import { Tag , HStack, Stack, Text, Button} from '@chakra-ui/react'
+import { Tag , HStack, Stack, Text, Button,Box, Center} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable ,DropResult} from "react-beautiful-dnd";
 interface IdProps {
@@ -18,7 +18,7 @@ interface Item {
 
 
 
-    function Home(IdProps :IdProps) {
+function Home(IdProps :IdProps) {
         const location = useLocation();
         const navigate = useNavigate();
         const id = sessionStorage.getItem('isLogin_id');
@@ -28,50 +28,53 @@ interface Item {
         const [testList2, setTestList2] = useState<Item[]>([]);
         const [testList3, setTestList3] = useState<Item[]>([]);
 
-        useEffect(() => {
-            const data = async() => {
-                const formData = new FormData()
-                // formData.append("id", IdProps.loginUserId)
-                 const user_id = sessionStorage.getItem('isLogin_id');
-                 const user_name = sessionStorage.getItem('isLogin_name');
-                 const isLogin = sessionStorage.getItem('isLogin');
-                 console.log("セッション",user_id)
-                 console.log("セッション",user_name)
-                 console.log("セッション",isLogin)
-                 if (user_id == null) {
-                  navigate('/')
-                  alert("ログインしてください")
-                }else{
-                  formData.append("id", user_id)
-                }
-                
-        
-                await axios.post('http://localhost:3000/getdata', formData)
-                .then((res) =>{
-                 if (!res.data || res.data.length === 0) {
-                  console.log('データが存在しません');
-                  // ユーザーにメッセージを表示する処理
-                } else {
-                console.log(res.data)
-                console.log("ステータスコード:", res.status)
-                const test1 = res.data.filter((item: { progress: string; }) => item.progress === "unSubmit")
-                const test2 = res.data.filter((item: { progress: string; }) => item.progress === "Submited")
-                const test3 = res.data.filter((item: { progress: string; }) => item.progress === "Confirmed")
-                setTestList(test1)
-                setTestList2(test2)
-                setTestList3(test3)
-                console.log(test1)
-                console.log(test2)
-                console.log(test3)
-                }})
-                  
-                .catch((error)=>{
-                    console.log("ステータスコード:", error.response.status)
-                    console.log(error.response.data)
-                    alert("getdataに失敗しました")
-                  })
+        const get_data = async() => {
+            const formData = new FormData()
+            // formData.append("id", IdProps.loginUserId)
+             const user_id = sessionStorage.getItem('isLogin_id');
+             const user_name = sessionStorage.getItem('isLogin_name');
+             const isLogin = sessionStorage.getItem('isLogin');
+             console.log("セッション",user_id)
+             console.log("セッション",user_name)
+             console.log("セッション",isLogin)
+             if (user_id == null) {
+              navigate('/')
+              alert("ログインしてください")
+            }else{
+              formData.append("id", user_id)
             }
-            data();
+            
+    
+            await axios.post('http://localhost:3000/getdata', formData)
+            .then((res) =>{
+             if (!res.data || res.data.length === 0) {
+              console.log('データが存在しません');
+              // ユーザーにメッセージを表示する処理
+            setTestList([]);
+            setTestList2([]);
+            setTestList3([]);
+            } else {
+            console.log(res.data)
+            console.log("ステータスコード:", res.status)
+            const test1 = res.data.filter((item: { progress: string; }) => item.progress === "unSubmit")
+            const test2 = res.data.filter((item: { progress: string; }) => item.progress === "Submited")
+            const test3 = res.data.filter((item: { progress: string; }) => item.progress === "Confirmed")
+            setTestList(test1)
+            setTestList2(test2)
+            setTestList3(test3)
+            console.log(test1)
+            console.log(test2)
+            console.log(test3)
+            }})
+              
+            .catch((error)=>{
+                console.log("ステータスコード:", error.response.status)
+                console.log(error.response.data)
+                alert("getdataに失敗しました")
+              })
+        }
+        useEffect(() => {
+          get_data();
           }, []);
 
         const onDragEndTest = (result : DropResult) => {
@@ -136,6 +139,7 @@ interface Item {
             setTestList3(newTestList3);
             //変更したbillのidとprogressを送信
             
+            
             update_data(draggedItem.progress ,draggedItem.id );
           };
           
@@ -167,6 +171,36 @@ interface Item {
         const ClilkedIssue =()=>{
             navigate('/issue',{state: {id: id, name: name}})
         }
+
+        const delete_data = async(delete_id :string) => {
+          const formData = new FormData()
+          formData.append("delete_id",delete_id)
+  
+          await axios.post('http://localhost:3000/delete', formData)
+          .then((res) => {
+          console.log(res.data)
+          console.log("delete時のステータスコード:", res.status)
+          get_data();
+
+
+
+          })
+          .catch((error)=>{
+              console.log("ステータスコード:", error.response.status)
+              console.log(error.response.data)
+              alert("deleteに失敗しました")
+            })
+          }
+        const deleteIsuue =(id:string)=>{
+          console.log(id)
+          delete_data(id);
+          //消しても更新されてなかったら解除
+          
+
+        }
+
+
+
 
   return (
     <div className="home">
@@ -208,6 +242,10 @@ interface Item {
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='red' >
+                                      
+                                      <button onClick={() => deleteIsuue(id)}>×</button>
+                                    </Tag>
                                 </HStack>
                             </Stack>
                     
@@ -221,6 +259,18 @@ interface Item {
                 </div>
             )}
             </Droppable>
+            <Center >
+              <Stack spacing={0} width={"200px"} className="money_box">
+                <Box  h='40px' backgroundColor={"#545454"} color={"white"} borderRadius={"2px"}>
+                  <Text fontSize='20px'>Total price</Text>
+                </Box>
+
+              <Box  backgroundColor={"white"} h='40px' color={"#545454"} borderRadius={"2px"}>
+                <Text fontSize='20px'> {testList.reduce((sum, item) => sum + parseInt(item.charge), 0)}円</Text>
+              </Box>
+            
+              </Stack>
+            </Center>
         </div>
 
         <div>
@@ -256,6 +306,9 @@ interface Item {
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='red' onClick={() => deleteIsuue(id)}>
+                                        ×
+                                    </Tag>
                                 </HStack>
                             </Stack>
                     
@@ -269,6 +322,18 @@ interface Item {
             </div>
           )}
         </Droppable>
+            <Center >
+              <Stack spacing={0} width={"200px"} className="money_box">
+                <Box  h='40px' backgroundColor={"#545454"} color={"white"} borderRadius={"2px"}>
+                  <Text fontSize='20px'>Total price</Text>
+                </Box>
+
+              <Box  backgroundColor={"white"} h='40px' color={"#545454"} borderRadius={"2px"}>
+                <Text fontSize='20px'> {testList2.reduce((sum, item) => sum + parseInt(item.charge), 0)}円</Text>
+              </Box>
+            
+              </Stack>
+            </Center>
         </div>
         <div>
         <Text fontSize='27.5' >⚫︎Confirmed</Text>
@@ -303,6 +368,9 @@ interface Item {
                                     <Tag size='sm'borderRadius='full'  color='gray'>
                                         2024年
                                     </Tag>
+                                    <Tag size='sm'borderRadius='full'  color='red' onClick={() => deleteIsuue(id)}>
+                                        ×
+                                    </Tag>
                                 </HStack>
                             </Stack>
                     
@@ -316,6 +384,18 @@ interface Item {
             </div>
           )}
         </Droppable>
+            <Center >
+              <Stack spacing={0} width={"200px"} className="money_box">
+                <Box  h='40px' backgroundColor={"#545454"} color={"white"} borderRadius={"2px"}>
+                  <Text fontSize='20px'>Total price</Text>
+                </Box>
+
+              <Box  backgroundColor={"white"} h='40px' color={"#545454"} borderRadius={"2px"}>
+                <Text fontSize='20px'> {testList3.reduce((sum, item) => sum + parseInt(item.charge), 0)}円</Text>
+              </Box>
+            
+              </Stack>
+            </Center>
         </div>
       </DragDropContext>
     </div>
