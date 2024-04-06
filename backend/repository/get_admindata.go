@@ -24,7 +24,7 @@ func GetAdminData(id string,plan string,month string) ([]schema.Issues, error) {
 
 	
 	if id != "all" {
-		conditions = append(conditions, "b.id = ?")
+		conditions = append(conditions, "u.id = ?")
 		params = append(params, id) 
 	}
 	

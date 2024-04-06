@@ -149,6 +149,7 @@ interface Userlist{
           };
           
           const showData = async(user_id :string, month :string, plan :string) => {
+
             const formData = new FormData()
             formData.append("user_id", user_id)
             formData.append("month", month)
@@ -162,10 +163,12 @@ interface Userlist{
                 } else {
                 console.log(res.data)
                 console.log("ステータスコード:", res.status)
+                
 
                 const test1 = res.data.filter((item: { progress: string; }) => item.progress === "unSubmit")
                 const test2 = res.data.filter((item: { progress: string; }) => item.progress === "Submited")
                 const test3 = res.data.filter((item: { progress: string; }) => item.progress === "Confirmed")
+
                 setTestList(test1)
                 setTestList2(test2)
                 setTestList3(test3)
@@ -187,9 +190,11 @@ interface Userlist{
   return (
     <div className="home">
         <HStack spacing={10} pt='80px' mb='20px' pl='200px'>
+            
 
             <Button  borderRadius="full" bg='#454545'color='white' _hover={{ bg:'#454545' ,color:'gray'}} w='140px'   onClick={ClilkedShow} fontSize='20px'>Show</Button>
             <Select placeholder='select_user' w='340px' backgroundColor={"white"} onChange={onUserChange}>
+                <option value='all'>all</option>
                 {userlist.map(({ id, user_id}, index) => {
                     return (
                         <option value={id}>{user_id}</option>
@@ -197,7 +202,7 @@ interface Userlist{
                     })
                 }
                     <option value='tsuji.kota@mikilab.doshisha.ac.jp'>tsuji.kota@mikilab.doshisha.ac.jp</option>
-                    <option value='all'>all</option>
+                    
 
             </Select>
 
@@ -208,6 +213,7 @@ interface Userlist{
                     <option value='nomal'>nomal</option>
                 </Select>
                 <Select placeholder='year' w='100px' backgroundColor={"white"}>
+                    <option value='all'>all</option>
                     <option value='2024'>2024</option>
                     <option value='2025'>2025</option>
                     <option value='2026'>2026</option>

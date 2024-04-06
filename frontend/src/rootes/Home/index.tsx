@@ -12,6 +12,7 @@ interface Item {
     id: string;
     charge: string;
     issued_month: string;
+    image_name: string;
     plan: string;
     progress: string;
 }
@@ -218,7 +219,7 @@ function Home(IdProps :IdProps) {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >
-                {testList.map(({ id, charge, issued_month, plan,progress}, index) => {
+                {testList.map(({ id, charge, issued_month, plan,image_name}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -230,7 +231,7 @@ function Home(IdProps :IdProps) {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
                                         {issued_month}月
@@ -282,7 +283,7 @@ function Home(IdProps :IdProps) {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList2.map(({ id, charge, issued_month, plan,progress}, index) => {
+              {testList2.map(({ id, charge, issued_month, plan,image_name}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -294,7 +295,7 @@ function Home(IdProps :IdProps) {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
                                         {issued_month}月
@@ -344,7 +345,7 @@ function Home(IdProps :IdProps) {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList3.map(({ id, charge, issued_month, plan,progress}, index) => {
+              {testList3.map(({ id, charge, issued_month, plan,image_name}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -356,7 +357,7 @@ function Home(IdProps :IdProps) {
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='gray'>
                                         {issued_month}月

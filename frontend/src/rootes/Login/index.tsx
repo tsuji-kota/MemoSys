@@ -34,7 +34,7 @@ function Login({setState}:LoginProps) {
           console.log(res.data)
 
           setState(res.data.id,res.data.name)
-          alert(res.data.name)
+          // alert(res.data.name)
           if(res.data.name==="admin" && res.data.id===1){
             navigate('/admin')
             
@@ -47,7 +47,7 @@ function Login({setState}:LoginProps) {
           .catch((error)=>{
             console.log("ステータスコード:", error.response.status)
             console.log(error.response.data)
-            alert("ログインに失敗しました")
+            alert("ユーザIDまたはパスワードが違います")
           })
       }
       
