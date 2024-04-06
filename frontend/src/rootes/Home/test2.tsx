@@ -1,18 +1,19 @@
-export const TestList = [
+
+export const TestList2 = [
     {
-      id: "01",
-      name: "1616",
+      id: "11",
+      name: "みかん",
     },
     {
-      id: "02",
+      id: "22",
       name: "りんご",
     },
     {
-      id: "03",
+      id: "33",
       name: "ぶどう",
     },
     {
-      id: "04",
+      id: "44",
       name: "メロン",
     },
   ];
