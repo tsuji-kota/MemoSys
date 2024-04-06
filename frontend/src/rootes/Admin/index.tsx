@@ -15,6 +15,7 @@ interface Item {
     issued_month: string;
     plan: string;
     progress: string;
+    image_name: string;
 }
 interface Userlist{
     id: string;
@@ -255,7 +256,7 @@ interface Userlist{
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >
-                {testList.map(({ id, charge, issued_month, plan,progress,user_id}, index) => {
+                {testList.map(({ id, charge, issued_month, plan,image_name,user_id}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -267,7 +268,7 @@ interface Userlist{
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='green'>
                                         {user_id}
@@ -307,7 +308,7 @@ interface Userlist{
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList2.map(({ id, charge, issued_month, plan,progress,user_id}, index) => {
+              {testList2.map(({ id, charge, issued_month, plan,image_name,user_id}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -319,7 +320,7 @@ interface Userlist{
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='green'>
                                         {user_id}
@@ -358,7 +359,7 @@ interface Userlist{
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {testList3.map(({ id, charge, issued_month, plan,progress,user_id}, index) => {
+              {testList3.map(({ id, charge, issued_month, plan,image_name,user_id}, index) => {
                     return (
                     <Draggable key={id} draggableId={id} index={index}>
                         {(provided) => (
@@ -370,7 +371,7 @@ interface Userlist{
                         >
                             <div>
                             <Stack>
-                            <Text fontSize='20px'><a href='http://abehiroshi.la.coocan.jp/' target="_blank">{charge}円</a></Text>
+                            <Text fontSize='20px'><a href={image_name} target="_blank">{charge}円</a></Text>
                                 <HStack spacing='4px'>
                                     <Tag size='sm' borderRadius='full' color='green'>
                                         {user_id}
