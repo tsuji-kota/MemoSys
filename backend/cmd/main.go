@@ -4,17 +4,14 @@ import (
 	"github.com/tsuji-kota/MemoSys/backend/repository"
 	"github.com/tsuji-kota/MemoSys/backend/schema"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions/cookie"
 	"net/http"
     "log"
+	_ "strconv"
 )
 
 func main() {
 	router := gin.Default()
-	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("session", store))
 
 	setCors(router)
 	//TODO
@@ -23,7 +20,7 @@ func main() {
 	router.POST("/login", postLogin)
 	router.POST("/signup", postSignup)
 	router.POST("/issue", postIssue)
-	router.GET("/getdata", getData)
+	router.POST("/getdata", getData)
     
     srv := http.Server{
         Addr:    ":3000",
@@ -41,6 +38,7 @@ func setCors(router *gin.Engine) {
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
 		AllowCredentials: true,
+
 	}))
 }
 
@@ -81,10 +79,15 @@ func postLogin(cxt *gin.Context) {
 
 	//DBに登録する処理を書く
 	err,id := repository.PostLogin(user)
+	name := user.UserId
+
+	log.Println("ユーザーネームこれ？：",name)
+
 	
 		if err == nil {
 			cxt.JSON(http.StatusOK, gin.H{
-				"message": "login success",
+				"id": id,
+				"name": name,
 			})
 		} else {
 			log.Printf("パスワード間違えてるて")
@@ -94,11 +97,8 @@ func postLogin(cxt *gin.Context) {
 			})
 		}
 	log.Println("セッションに値を設定します。")
-	session := sessions.Default(cxt)
-	session.Set("user_id", user.UserId)
-	session.Set("id", id)
-	log.Println("セッションを保存します。")
-	err = session.Save()
+	
+	
 	if err != nil {
 		log.Printf("セッションの保存中にエラーが発生しました: %v", err)
 		// エラー処理
@@ -113,6 +113,7 @@ func postIssue(cxt *gin.Context) {
 	charge := cxt.PostForm("charge")
 	month := cxt.PostForm("month")
 	progress := cxt.PostForm("progress")
+	id := cxt.PostForm("id")
 	log.Printf("formから中身を取り出す")
 	if err != nil {
 		//401
@@ -134,18 +135,11 @@ func postIssue(cxt *gin.Context) {
 	}
 	log.Printf("gcsに送信できた")
 
-	session := sessions.Default(cxt)
-	log.Printf("sessionを取得した")
-	fkUser_id := session.Get("id")
-	log.Printf("sessionからidを取得した")
-	fkUserIDInt, ok := fkUser_id.(int)
-	if !ok {
-		//401
-		log.Printf("セッションがうまくいってない")
-	}
+
+
 
 	//ファイルのURL+その他をDBに登録する処理を書く
-	err = repository.PostIssue(gcpPath, plan, charge, month, progress, fkUserIDInt)
+	err = repository.PostIssue(gcpPath, plan, charge, month, progress, id)
 	if err == nil {
 		cxt.JSON(http.StatusOK, gin.H{
 			"message": "issue success",
@@ -160,17 +154,18 @@ func postIssue(cxt *gin.Context) {
 }
 func getData(cxt *gin.Context){
 	log.Printf("getDataのエンドポイントに来てる")
-	session := sessions.Default(cxt)
-	log.Printf("sessionを取得した")
-	fkUser_id := session.Get("id")
-	log.Printf("sessionからidを取得した")
-	fkUserIDInt, ok := fkUser_id.(int)
-	if !ok {
-		//401
-		log.Printf("セッションがうまくいってない")
-	}
-	
-	err :=repository.GetData(fkUserIDInt)
+	id := cxt.PostForm("id")
 
+	bills, err :=repository.GetData(id)
+	if err != nil {
+		//200
+		cxt.JSON(http.StatusOK, bills)
+		log.Printf("データを取得して送信した")
+	} else {
+		cxt.JSON(http.StatusBadRequest, gin.H{
+			//400
+			"message": "getdata faild",
+		})
+	}
 
 }

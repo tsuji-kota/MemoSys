@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Box, Center, Text, Select, Stack, Button, Grid,GridItem} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
+interface IdProps {
+    loginUserId: string;
+  }
+  
 
-function Issue() {
+function Issue(IdProps : IdProps) {
     const navigate = useNavigate();
     const [plan, setPlan] = useState<string>("");
     const [charge, setCharge] = useState<string>("");
@@ -41,6 +45,7 @@ function Issue() {
         formData.append("charge", charge)
         formData.append("month", month)
         formData.append("progress", progress)
+        formData.append("id", IdProps.loginUserId)
 
         await axios.post('http://localhost:3000/issue', formData)
         .then((res) => {

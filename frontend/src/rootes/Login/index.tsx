@@ -4,8 +4,10 @@ import axios from 'axios';
 import { Box, Center, Text, Input, Stack, Button, Grid,GridItem} from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
 
+axios.defaults.withCredentials = true;
+
 type LoginProps = {
-  setState: () => void; 
+  setState: (loginUserId: string , UserName: string)=> void; 
 };
 
 function Login({setState}:LoginProps) {
@@ -23,14 +25,18 @@ function Login({setState}:LoginProps) {
       }else{
         axios({
           method: "post",
+          withCredentials: true,
           url: "http://localhost:3000/login",
           data: {"user_id" : input_user_id, "password" : input_password}
          })
          .then((res)=>{
           console.log("ステータスコード:", res.status)
           console.log(res.data)
+
+          setState(res.data.id,res.data.name)
+          alert(res.data.name)
+
           navigate('/home')
-          setState()
          })
           .catch((error)=>{
             console.log("ステータスコード:", error.response.status)

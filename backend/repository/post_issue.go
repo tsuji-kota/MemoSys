@@ -7,7 +7,7 @@ import (
 	_ "fmt"
 )
 
-func PostIssue(gcpPath string, plan string, charge string, month string, progress string, fkUser_id int) error {
+func PostIssue(gcpPath string, plan string, charge string, month string, progress string, fkUser_id string) error {
 	var bill_id int64
 
 	log.Printf("gcpPath: %v plan: %v charge: %v month: %v FKuser_id %v", gcpPath, plan, charge, month,fkUser_id)
