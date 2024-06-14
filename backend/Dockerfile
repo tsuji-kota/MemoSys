@@ -9,7 +9,7 @@ ADD . /go/src/backend
 
 RUN go mod download
 
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 EXPOSE 3000
 

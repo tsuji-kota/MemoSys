@@ -3,3 +3,4 @@
 .env
 .DS_Store
 /backend/repository/memosys_gcskey.json
+.VSCodeCounter
