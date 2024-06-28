@@ -97,17 +97,21 @@ function Home(IdProps :IdProps) {
           
             // ドラッグされたアイテムを特定
             let draggedItem: Item;
-
             if (source.droppableId === "unsubmit") {
               draggedItem = testList[source.index];
-              draggedItem.progress = "Submited"
-
             } else if (source.droppableId === "submit") {
-              draggedItem = testList2[source.index]; 
-              draggedItem.progress = "Confirmed"
+              draggedItem = testList2[source.index];
             } else {
               draggedItem = testList3[source.index];
-              draggedItem.progress = "unSubmit"
+            }
+        
+            // 新しい進捗ステータスを設定
+            if (destination.droppableId === "unsubmit") {
+              draggedItem.progress = "unSubmit";
+            } else if (destination.droppableId === "submit") {
+              draggedItem.progress = "Submited";
+            } else {
+              draggedItem.progress = "Confirmed";
             }
             console.log(draggedItem) 
           
